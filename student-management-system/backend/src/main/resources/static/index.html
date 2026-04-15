@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Student Management System</h1>
+            <p>Manage students efficiently with our system</p>
+        </header>
+
+        <nav class="navbar">
+            <div class="nav-content">
+                <button class="nav-btn active" onclick="showTab('view')">View Students</button>
+                <button class="nav-btn" onclick="showTab('add')">Add Student</button>
+            </div>
+        </nav>
+
+        <!-- View Students Tab -->
+        <div id="view-tab" class="tab-content active">
+            <div class="controls">
+                <div class="search-group">
+                    <input type="text" id="searchInput" placeholder="Search by name or student ID..." 
+                           class="search-input">
+                    <button onclick="searchStudents()" class="btn btn-search">Search</button>
+                    <button onclick="getAllStudents()" class="btn btn-reset">Reset</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="studentsTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Student ID</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Course</th>
+                            <th>GPA</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="9" class="text-center">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Pagination buttons will be generated here -->
+            </div>
+        </div>
+
+        <!-- Add/Edit Student Tab -->
+        <div id="add-tab" class="tab-content">
+            <div class="form-container">
+                <h2 id="formTitle">Add New Student</h2>
+                <form id="studentForm" onsubmit="submitForm(event)">
+                    <input type="hidden" id="studentId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name:</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentIdInput">Student ID:</label>
+                            <input type="text" id="studentIdInput" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone:</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="course">Course:</label>
+                            <input type="text" id="course" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gpa">GPA:</label>
+                            <input type="number" id="gpa" step="0.01" min="0" max="4" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="address">Address:</label>
+                            <textarea id="address" rows="3" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-submit">Save Student</button>
+                        <button type="button" class="btn btn-cancel" onclick="resetForm()">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Edit Student</h2>
+            <form id="editForm" onsubmit="submitEditForm(event)">
+                <input type="hidden" id="editStudentId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editName">Full Name:</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStudentIdInput">Student ID:</label>
+                        <input type="text" id="editStudentIdInput" disabled>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editEmail">Email:</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone:</label>
+                        <input type="tel" id="editPhone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editCourse">Course:</label>
+                        <input type="text" id="editCourse" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editGpa">GPA:</label>
+                        <input type="number" id="editGpa" step="0.01" min="0" max="4" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="editAddress">Address:</label>
+                        <textarea id="editAddress" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Update Student</button>
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content alert-content">
+            <h2 id="alertTitle">Alert</h2>
+            <p id="alertMessage"></p>
+            <div class="form-actions">
+                <button class="btn btn-submit" onclick="closeAlert()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
